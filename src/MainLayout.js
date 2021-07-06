@@ -8,52 +8,14 @@ import { TodoContext } from "./context/todo/todoContext";
 import { ScreenContext } from "./context/screen/screenContext";
 
 export const MainLayout = () => {
-  const { todos, addTodo, removeTodo, updateTodo } = useContext(TodoContext);
-  const {todoId, changeScreen} = useContext(ScreenContext)
-
-  // const removeTodo = (id) => {
-  //   const todo = todos.find((t) => t.id === id);
-  //   Alert.alert("Delete todo", `wanna delete "${todo.title}"?`, [
-  //     {
-  //       text: "Cancel",
-  //       style: "cancel",
-  //     },
-  //     {
-  //       text: "Delete",
-  //       style: "destructive",
-  //       onPress: () => {
-  //         setTodoId(null);
-  //         setTodos((prev) => prev.filter((todo) => todo.id !== id));
-  //       },
-  //     },
-  //   ]);
-  // };
-
-  let content = (
-    <MainScreen
-      todos={todos}
-      addTodo={addTodo}
-      removeTodo={removeTodo}
-      openTodo={changeScreen}
-    />
-  );
-
-  if (todoId) {
-    const selectedTodo = todos.find((todo) => todo.id === todoId);
-    content = (
-      <TodoScreen
-        onRemove={removeTodo}
-        goBack={() => changeScreen(null)}
-        todo={selectedTodo}
-        onSave={updateTodo}
-      />
-    );
-  }
+  const { todoId } = useContext(ScreenContext);
 
   return (
     <View>
       <Navbar title='Todo App!' />
-      <View style={styles.container}>{content}</View>
+      <View style={styles.container}>
+        {todoId ? <TodoScreen /> : <MainScreen />}
+      </View>
     </View>
   );
 };
