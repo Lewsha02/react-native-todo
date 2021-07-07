@@ -75,14 +75,30 @@ export const TodoState = ({ children }) => {
       const todos = Object.keys(data).map((key) => ({ ...data[key], id: key }));
       dispatch({ type: FETCH_TODOS, todos });
     } catch (e) {
-      showError('Something goes wrong...');
+      showError("Something goes wrong...");
       console.log(e);
     } finally {
       hideLoader();
     }
   };
 
-  const updateTodo = (id, title) => dispatch({ type: UPDATE_TODO, id, title });
+  const updateTodo = async (id, title) => {
+    clearError();
+    try {
+      await fetch(
+        `https://rn-todo-app-63eb4-default-rtdb.firebaseio.com/todos/${id}.json`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title }),
+        }
+      );
+      dispatch({ type: UPDATE_TODO, id, title });
+    } catch (e) {
+      showError("Something goes wrong...");
+      console.log(e);
+    }
+  };
 
   const showLoader = () => dispatch({ type: SHOW_LOADER });
 
