@@ -61,18 +61,25 @@ export const TodoState = ({ children }) => {
 
   const fetchTodos = async () => {
     showLoader();
-    const response = await fetch(
-      "https://rn-todo-app-63eb4-default-rtdb.firebaseio.com/todos.json",
-      {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-    const data = await response.json();
-    // console.log("Fetch data ", data);
-    const todos = Object.keys(data).map((key) => ({ ...data[key], id: key }));
-    dispatch({ type: FETCH_TODOS, todos });
-    hideLoader();
+    clearError();
+    try {
+      const response = await fetch(
+        "https://rn-todo-app-63eb4-default-rtdb.firebaseio.com/todos.json",
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      // console.log("Fetch data ", data);
+      const todos = Object.keys(data).map((key) => ({ ...data[key], id: key }));
+      dispatch({ type: FETCH_TODOS, todos });
+    } catch (e) {
+      showError('Something goes wrong...');
+      console.log(e);
+    } finally {
+      hideLoader();
+    }
   };
 
   const updateTodo = (id, title) => dispatch({ type: UPDATE_TODO, id, title });
@@ -83,7 +90,7 @@ export const TodoState = ({ children }) => {
 
   const showError = (error) => dispatch({ type: SHOW_ERROR, error });
 
-  const clearErorr = () => dispatch({ type: CLEAR_ERROR });
+  const clearError = () => dispatch({ type: CLEAR_ERROR });
 
   return (
     <TodoContext.Provider
